@@ -1,13 +1,33 @@
 package com.ecomapp.Controller;
 
+import com.ecomapp.DTOs.ProductRequest;
 import com.ecomapp.DTOs.ProductResponse;
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.ecomapp.Service.ProductService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/api/products")
+@AllArgsConstructor
 public class ProductController {
 
-    public ProductResponse getAllProducts() {
+    private  final ProductService productService;
 
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductResponse>>getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
+
+    }
+    @PostMapping()
+    public ResponseEntity<ProductResponse>createProduct(@RequestBody ProductRequest productRequest) {
+        return ResponseEntity.ok(productService.createProduct(productRequest));
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void>deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 
 
