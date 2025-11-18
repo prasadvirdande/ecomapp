@@ -60,6 +60,7 @@ public class PorductServiceImpl implements  ProductService{
         productResponse.setPrice(product.getPrice());
         productResponse.setStockQuantity(product.getStockQuantity());
         productResponse.setCategory(product.getCategory());
+        productResponse.setImageUrl(product.getImageUrl());
        productResponse.setCreatedAt(product.getCreatedAt());
         productResponse.setUpdatedAt(product.getUpdatedAt());
         return productResponse;
