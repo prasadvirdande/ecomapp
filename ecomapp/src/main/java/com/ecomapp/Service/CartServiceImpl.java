@@ -7,13 +7,17 @@ import com.ecomapp.Model.User;
 import com.ecomapp.Repository.CartRepository;
 import com.ecomapp.Repository.ProductRepository;
 import com.ecomapp.Repository.USerRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
@@ -21,7 +25,7 @@ public class CartServiceImpl implements CartService {
     private final USerRepository userRepository;
 
     @Override
-    public boolean addProductToCart(String userId, CartRequest cartRequest) {
+    public void addProductToCart(String userId, CartRequest cartRequest) {
 
         User user = userRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -33,7 +37,7 @@ public class CartServiceImpl implements CartService {
 
         if (existingItem != null) {
             existingItem.setQuantity((int) (existingItem.getQuantity()+cartRequest.getQuantity()));
-            existingItem.setTotalPrice(
+            existingItem.setPrice(
                     product.getPrice().multiply(BigDecimal.valueOf(existingItem.getQuantity()))
             );
 
@@ -43,12 +47,39 @@ public class CartServiceImpl implements CartService {
             newItem.setUser(user);
             newItem.setProduct(product);
             newItem.setQuantity(Math.toIntExact(cartRequest.getQuantity()));
-            newItem.setTotalPrice(
+            newItem.setPrice(
                     product.getPrice().multiply(BigDecimal.valueOf(cartRequest.getQuantity()))
             );
 
             cartRepository.save(newItem);
         }
-        return false;
+
+
     }
+    @Override
+    public boolean deleteItemFromCart(String userId, String productId) {
+        Optional<User> user = Optional.ofNullable(userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new RuntimeException("User not found")));
+
+       Optional< Product> product = Optional.ofNullable(productRepository.findById(Long.valueOf(productId))
+               .orElseThrow(() -> new RuntimeException("Product not found")));
+        if(user.isPresent() && product.isPresent()){
+            cartRepository.deleteByUserAndProduct(user.get(), product.get());
+         return  true;
+        }
+        return false;
+
+    }
+
+    @Override
+    public List<CartItem> getCart(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return cartRepository.findByUserId(user);
+    }
+
+
 }
+

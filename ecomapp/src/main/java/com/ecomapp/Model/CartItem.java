@@ -2,6 +2,7 @@ package com.ecomapp.Model;
 
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -11,13 +12,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+
 public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String productId;
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
@@ -28,13 +28,10 @@ public class CartItem {
 
     private Integer quantity;
     private BigDecimal price;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public void setTotalPrice(BigDecimal multiply) {
-    }
 }
