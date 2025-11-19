@@ -35,6 +35,30 @@ public class PorductServiceImpl implements  ProductService{
 
     }
 
+    @Override
+    public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
+      Optional<Product> product=productRepository.findById(id);
+      if(product.isEmpty()){
+        throw new RuntimeException("Product not found with id " + id);
+      }
+        Product product1=product.get();
+        product1.setName(productRequest.getName());
+        product1.setDescription(productRequest.getDescription());
+        product1.setPrice(productRequest.getPrice());
+        product1.setStockQuantity(productRequest.getStockQuantity());
+        product1.setCategory(productRequest.getCategory());
+        product1.setImageUrl(productRequest.getImageUrl());
+        return mapToProductResponse(productRepository.save(product1));
+    }
+
+    @Override
+    public List<ProductResponse> searchProduct(String keyword) {
+        return productRepository.findyByKeyWord(keyword)
+                .stream()
+                .map(this::mapToProductResponse)
+                .toList();
+    }
+
 
     @Override
     public ProductResponse createProduct(ProductRequest productRequest) {
@@ -48,6 +72,7 @@ public class PorductServiceImpl implements  ProductService{
         product1.setPrice(productRequest.getPrice());
         product1.setStockQuantity(productRequest.getStockQuantity());
         product1.setCategory(productRequest.getCategory());
+        product1.setImageUrl(productRequest.getImageUrl());
         return mapToProductResponse(productRepository.save(product1));
     }
 
