@@ -34,4 +34,7 @@ public class CartItem {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public void setTotalPrice(BigDecimal multiply) {
+    }
 }
