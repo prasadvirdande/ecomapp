@@ -72,12 +72,22 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<CartItem> getCart(Long userId) {
+    public List<CartItem> getCart(String userId) {
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return cartRepository.findByUserId(user);
+        return cartRepository.findByUser(user);
+    }
+
+
+    @Override
+    public void clearCart(String userId) {
+
+        userRepository.findById(Long.valueOf(userId)).ifPresent(
+                cartRepository::deleteByUser
+        );
+
     }
 
 
